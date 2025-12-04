@@ -43,7 +43,7 @@ fn is_repeated_any(num: isize) -> bool {
 fn main() -> Result<()> {
     let mut args = std::env::args();
     let fname = args.nth(1).ok_or_eyre("filename was not provided")?;
-    let body: String = std::fs::read_to_string(fname.as_str())?;
+    let body: String = std::fs::read_to_string(&fname)?;
     let ranges = match parse_file(&body) {
         Ok((_, v)) => v,
         Err(e) => match e {

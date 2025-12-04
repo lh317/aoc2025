@@ -17,7 +17,7 @@ fn parse_line<'a>(input: &'a str) -> IResult<&'a str, (char, isize)>
 fn main() -> Result<()> {
     let mut args = std::env::args();
     let fname = args.nth(1).ok_or_eyre("filename was not provided")?;
-    let body: String = std::fs::read_to_string(fname.as_str())?;
+    let body: String = std::fs::read_to_string(&fname)?;
     let mut zeros1 = 0isize;
     let mut zeros2 = 0isize;
     let mut dial = 50isize;
