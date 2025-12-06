@@ -1,4 +1,4 @@
-use eyre::{Context, OptionExt, Result, eyre};
+use eyre::{OptionExt, Result, eyre};
 use ndarray::{Array2, ArrayRef2};
 
 fn in_bounds((y, x): (isize, isize), (rows, cols): (isize, isize)) -> bool {
@@ -23,7 +23,7 @@ fn parse_file(body: &str, file_name: Option<&str>) -> Result<Array2<bool>> {
             ));
         }
     }
-    Array2::from_shape_vec((rows, columns), values).wrap_err("error creating array")
+    Ok(Array2::from_shape_vec((rows, columns), values)?)
 }
 
 fn is_accessible((y, x): (usize, usize), rolls: &ArrayRef2<bool>) -> bool {
@@ -42,7 +42,9 @@ fn is_accessible((y, x): (usize, usize), rolls: &ArrayRef2<bool>) -> bool {
         (y + 1, x + 1),
     ];
     pos.iter()
-        .filter(|&&(y, x)| in_bounds((y, x), (rows, cols)) && rolls[[y as usize, x as usize]])
+        .filter(|&&(y, x)| {
+            in_bounds((y, x), (rows, cols)) && rolls[[y as usize, x as usize]]
+        })
         .count()
         < 4
 }
@@ -54,13 +56,9 @@ fn main() -> Result<()> {
     let mut rolls = parse_file(&body, Some(&fname))?;
     let mut removed = rolls
         .indexed_iter()
-        .filter_map(|(pos, c)| {
-            if *c && is_accessible(pos, &rolls) {
-                Some(pos)
-            } else {
-                None
-            }
-        })
+        .filter_map(
+            |(pos, c)| if *c && is_accessible(pos, &rolls) { Some(pos) } else { None },
+        )
         .collect::<Vec<_>>();
     let mut count = removed.len();
     println!("{}", count);
@@ -72,16 +70,13 @@ fn main() -> Result<()> {
         for pos in removed {
             rolls[pos] = false;
         }
-        removed = rolls
-            .indexed_iter()
-            .filter_map(|(pos, c)| {
-                if *c && is_accessible(pos, &rolls) {
-                    Some(pos)
-                } else {
-                    None
-                }
-            })
-            .collect::<Vec<_>>();
+        removed =
+            rolls
+                .indexed_iter()
+                .filter_map(|(pos, c)| {
+                    if *c && is_accessible(pos, &rolls) { Some(pos) } else { None }
+                })
+                .collect::<Vec<_>>();
         count += removed.len();
     }
 }

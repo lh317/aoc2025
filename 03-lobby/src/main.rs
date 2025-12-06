@@ -7,8 +7,10 @@ use nom::multi::many1;
 use nom::{IResult, Parser};
 
 fn parse_line(input: &str) -> IResult<&str, Vec<u8>> {
-    all_consuming(many1(map_opt(one_of("0123456789"), |c| c.to_digit(10).map(|d| d as u8))))
-        .parse(input)
+    all_consuming(many1(map_opt(one_of("0123456789"), |c| {
+        c.to_digit(10).map(|d| d as u8)
+    })))
+    .parse(input)
 }
 
 fn max_joltage(
@@ -25,15 +27,23 @@ fn max_joltage(
 }
 
 fn dangerous_joltage<const N: usize>(
-    digits: impl IntoIterator<Item = u8, IntoIter: ExactSizeIterator + DoubleEndedIterator + Clone>,
+    digits: impl IntoIterator<
+        Item = u8,
+        IntoIter: ExactSizeIterator + DoubleEndedIterator + Clone,
+    >,
 ) -> Option<isize> {
     let iter = digits.into_iter();
     if iter.len() >= N {
         let mut places = [0u8; N];
         let mut pos = iter.len();
         for i in 0..N {
-            (pos, places[i]) =
-                iter.clone().rev().enumerate().take(pos).skip(N - 1 - i).max_by_key(|(_, d)| *d)?;
+            (pos, places[i]) = iter
+                .clone()
+                .rev()
+                .enumerate()
+                .take(pos)
+                .skip(N - 1 - i)
+                .max_by_key(|(_, d)| *d)?;
         }
         let mut result = 0isize;
         for d in places {
@@ -65,7 +75,8 @@ fn main() -> Result<()> {
         //let joltage = max_joltage(bank.iter().cloned()).ok_or_eyre("{fname}:{lineno}: too short")?;
         let joltage = dangerous_joltage::<2>(bank.iter().cloned())
             .ok_or_eyre("{fname}:{lineno}: too short")?;
-        let dangerous = dangerous_joltage::<12>(bank).ok_or_eyre("{fname}:{lineno}: too short")?;
+        let dangerous =
+            dangerous_joltage::<12>(bank).ok_or_eyre("{fname}:{lineno}: too short")?;
         sum_joltage += joltage;
         sum_dangerous += dangerous;
     }

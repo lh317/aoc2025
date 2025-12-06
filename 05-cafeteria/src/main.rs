@@ -13,14 +13,19 @@ fn parse_number(input: &str) -> IResult<&str, isize> {
 }
 
 fn parse_range(input: &str) -> IResult<&str, RangeInclusive<isize>> {
-    (terminated(parse_number, char('-')), parse_number).map(|(start, end)| start..=end).parse(input)
+    (terminated(parse_number, char('-')), parse_number)
+        .map(|(start, end)| start..=end)
+        .parse(input)
 }
 
 fn parse_file(input: &str) -> IResult<&str, (Vec<RangeInclusive<isize>>, Vec<isize>)> {
     let ranges = separated_list1(newline, parse_range);
     let ingredients = separated_list1(newline, parse_number);
-    all_consuming((terminated(ranges, (newline, newline)), terminated(ingredients, opt(newline))))
-        .parse(input)
+    all_consuming((
+        terminated(ranges, (newline, newline)),
+        terminated(ingredients, opt(newline)),
+    ))
+    .parse(input)
 }
 
 fn main() -> Result<()> {
@@ -37,7 +42,10 @@ fn main() -> Result<()> {
         },
     };
     ranges.sort_by_key(|r| (*r.start(), *r.end()));
-    let fresh = ingredients.iter().filter_map(|id| ranges.iter().find(|r| r.contains(id))).count();
+    let fresh = ingredients
+        .iter()
+        .filter_map(|id| ranges.iter().find(|r| r.contains(id)))
+        .count();
     println!("{fresh}");
     if ranges.is_empty() {
         return Err(eyre!("{fname}: no input ranges"));

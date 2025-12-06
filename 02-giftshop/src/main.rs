@@ -17,7 +17,8 @@ fn parse_range(input: &str) -> IResult<&str, RangeInclusive<isize>> {
 }
 
 fn parse_file(input: &str) -> IResult<&str, Vec<RangeInclusive<isize>>> {
-   all_consuming(terminated(separated_list1(char(','), parse_range), newline)).parse(input)
+    all_consuming(terminated(separated_list1(char(','), parse_range), newline))
+        .parse(input)
 }
 
 fn is_repeated_once(num: isize) -> bool {
@@ -47,15 +48,25 @@ fn main() -> Result<()> {
     let ranges = match parse_file(&body) {
         Ok((_, v)) => v,
         Err(e) => match e {
-                nom::Err::Incomplete(_) => unreachable!(),
-                nom::Err::Error(e) | nom::Err::Failure(e) => return Err(eyre!("{fname}: parsing failed: {e:?}")),
+            nom::Err::Incomplete(_) => unreachable!(),
+            nom::Err::Error(e) | nom::Err::Failure(e) => {
+                return Err(eyre!("{fname}: parsing failed: {e:?}"));
             }
+        },
     };
-    let first =
-        ranges.iter().cloned().flatten().filter(|num| is_repeated_once(*num)).sum::<isize>();
+    let first = ranges
+        .iter()
+        .cloned()
+        .flatten()
+        .filter(|num| is_repeated_once(*num))
+        .sum::<isize>();
     println!("{first}");
-    let second =
-        ranges.iter().cloned().flatten().filter(|num| is_repeated_any(*num)).sum::<isize>();
+    let second = ranges
+        .iter()
+        .cloned()
+        .flatten()
+        .filter(|num| is_repeated_any(*num))
+        .sum::<isize>();
     println!("{second}");
     Ok(())
 }

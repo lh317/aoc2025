@@ -1,18 +1,12 @@
 use eyre::{OptionExt, Result, eyre};
-use nom::{IResult, Parser};
 use nom::character::complete::{digit1, one_of};
 use nom::combinator::{all_consuming, map_res};
+use nom::{IResult, Parser};
 
-fn parse_line<'a>(input: &'a str) -> IResult<&'a str, (char, isize)>
-{
-
-        all_consuming((
-                one_of("LR"),
-                map_res(digit1, |s: &'a str| s.parse::<isize>())
-            )
-        ).parse(input)
+fn parse_line<'a>(input: &'a str) -> IResult<&'a str, (char, isize)> {
+    all_consuming((one_of("LR"), map_res(digit1, |s: &'a str| s.parse::<isize>())))
+        .parse(input)
 }
-
 
 fn main() -> Result<()> {
     let mut args = std::env::args();
@@ -28,13 +22,15 @@ fn main() -> Result<()> {
             Ok((_, v)) => v,
             Err(e) => match e {
                 nom::Err::Incomplete(_) => unreachable!(),
-                nom::Err::Error(e) | nom::Err::Failure(e) => return Err(eyre!("{fname}:{lineno}: parsing failed: {e:?}")),
-            }
+                nom::Err::Error(e) | nom::Err::Failure(e) => {
+                    return Err(eyre!("{fname}:{lineno}: parsing failed: {e:?}"));
+                }
+            },
         };
         let clicks = match dir {
             'L' => -clicks,
             'R' => clicks,
-            _ => unreachable!()
+            _ => unreachable!(),
         };
         let spins = (dial + clicks).div_euclid(100);
         let new_dial = (dial + clicks).rem_euclid(100);
@@ -50,7 +46,7 @@ fn main() -> Result<()> {
         }
         dial = new_dial;
     }
-    zeros2 += zeros1;  // Landing on zero should also be included.
+    zeros2 += zeros1; // Landing on zero should also be included.
     println!("{zeros1}");
     println!("{zeros2}");
     Ok(())
