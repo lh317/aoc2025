@@ -1,0 +1,9 @@
+[package]
+name = "movies"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+eyre = "0.6.12"
+itertools = "0.14.0"
+nom = "8.0.0"
