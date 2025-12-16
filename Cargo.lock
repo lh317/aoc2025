@@ -41,6 +41,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "factory"
+version = "0.1.0"
+dependencies = [
+ "eyre",
+ "itertools",
+ "nom",
+]
+
+[[package]]
 name = "giftshop"
 version = "0.1.0"
 dependencies = [

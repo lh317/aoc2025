@@ -1,3 +1,3 @@
 [workspace]
 resolver = "2"
-members = ["01-combo", "02-giftshop", "03-lobby", "04-paper", "05-cafeteria", "06-trash", "07-tachyon", "08-playground", "09-movies"]
+members = ["01-combo", "02-giftshop", "03-lobby", "04-paper", "05-cafeteria", "06-trash", "07-tachyon", "08-playground", "09-movies", "10-factory"]

@@ -94,7 +94,7 @@ fn main() -> Result<()> {
     let points = match parse_file(&body) {
         Ok((_, v)) => v,
         Err(e) => match e {
-            nom::Err::Inmplete(_) => unreachable!(),
+            nom::Err::Incomplete(_) => unreachable!(),
             nom::Err::Error(e) | nom::Err::Failure(e) => {
                 return Err(eyre!("{fname}: parsing failed: {e:?}"));
             }
