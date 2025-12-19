@@ -265,6 +265,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "presents"
+version = "0.1.0"
+dependencies = [
+ "eyre",
+ "ndarray",
+ "nom",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.103"
 source = "registry+https://github.com/rust-lang/crates.io-index"
